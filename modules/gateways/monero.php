@@ -133,3 +133,4 @@ $form = '<form action="' . $systemurl . '/modules/gateways/monero/createinvoice.
     $form .= '</form>';
 $form .= '<p>'.$amount_xmr.$currency.'</p>';
     return $form;
+    }

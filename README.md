@@ -1,2 +1,1 @@
-# monerowhmcs
-WHMCS for Monero
+# WORK IN PROGRESS

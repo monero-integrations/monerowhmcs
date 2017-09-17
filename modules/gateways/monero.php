@@ -125,7 +125,8 @@ $post = array(
         'amount_xmr'    => $amount_xmr,
         'payment_id'    => $payment_id
     );
-$form = '<form action="' . $systemurl . '/modules/gateways/monero/createinvoice.php'" method="POST">';
+$form = '<form action="' . $systemurl . '"/modules/gateways/monero/createinvoice.php" method="POST">';
+
     foreach ($post as $key => $value) {
         $form .= '<input type="hidden" name="' . $key . '" value = "' . $value .'" />';
     }

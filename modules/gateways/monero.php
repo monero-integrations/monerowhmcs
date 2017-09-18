@@ -1,9 +1,7 @@
 <?php
-
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
-
 function monero_MetaData()
 {
     return array(
@@ -13,7 +11,6 @@ function monero_MetaData()
         'TokenisedStorage' => false,
     );
 }
-
 function monero_Config(){
 return array(
        

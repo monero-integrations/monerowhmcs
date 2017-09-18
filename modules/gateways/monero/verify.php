@@ -10,7 +10,7 @@ $invoice_id = $_POST['invoice_id'];
 $payment_id = $_POST['payment_id'];
 $amount = $_POST['amount'];
 $fee = "0.0";
-//$tran
+//$tranaction = $_POST['tranaction_id'];
 $gatewaymodule = "Monero";
 require_once('library.php');
 $monero_daemon = new Monero_rpc('localhost:18081/json_rpc');
@@ -27,8 +27,18 @@ $monero_daemon = new Monero_rpc('localhost:18081/json_rpc');
       { 
        if($get_payments_method["payments"][0]["amount"] >= $amount_ato$
                 {
-                        $message = "Payment has been received and confirmed. Th
+                        $message = "Payment has been received and confirmed. ";
                          $confirmed = true;
                         $transid = "0000";
                         logTransaction("monero",array('successful' => '0'),"Successful");            
                         addInvoicePayment($invoice_id,$transid,$amount,$fee,"monero");
+ }  
+          }
+          else
+          {
+                  $message = "We are waiting for your payment to be confirmed";
+          }
+          return $message;  
+  }
+$vefiry = verify_payment($payment_id, $amount, $invoice_id, $fee);
+echo $vefiry;

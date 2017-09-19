@@ -72,7 +72,7 @@ function monero_retriveprice($currency)
 }
 
 function monero_changeto($amount, $currency){
-    $xmr_live_price = $this->retriveprice($currency);
+    $xmr_live_price = monero_retriveprice($currency);
 								$live_for_storing = $xmr_live_price * 100; //This will remove the decimal so that it can easily be stored as an integer
 								$new_amount     = $amount / $xmr_live_price;
 								$rounded_amount = round($new_amount, 12);

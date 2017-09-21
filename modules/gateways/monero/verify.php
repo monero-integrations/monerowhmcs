@@ -44,4 +44,6 @@ function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
 }
 
 $vefiry = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
+
+//need to add real code to notify the user of the current status
 echo $vefiry;

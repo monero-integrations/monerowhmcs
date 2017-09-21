@@ -7,14 +7,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-//$gatewaymodule = "monero";
-//$GATEWAY = getGatewayVariables($gatewaymodule);
+$gatewaymodule = "monero";
+$GATEWAY = getGatewayVariables($gatewaymodule);
 
 $invoice_id = $_POST['invoice_id'];
 $payment_id = $_POST['payment_id'];
 $amount = $_POST['amount'];
-$link = $_POST['link'];
-
+//$link = $_POST['link'];
+$link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 $fee = "0.0";
 //$tranaction = $_POST['tranaction_id'];
 

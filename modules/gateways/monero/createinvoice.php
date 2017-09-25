@@ -6,13 +6,16 @@ include("../../../includes/invoicefunctions.php");
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 $gatewaymodule = "monero";
 $GATEWAY = getGatewayVariables($gatewaymodule);
 if(!$GATEWAY["type"]) die("Module not activated");
 require_once('library.php');
 
 $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
+
 $monero_daemon = new Monero_rpc($link);
+
 $message = "Waiting for Payment confirmation";
 $address = stripslashes($_POST['address']);
 $amount = stripslashes($_POST['amount_xmr']);
@@ -39,7 +42,7 @@ echo "<div class='row'>
           <div class='col-sm-9 col-md-9 col-lg-9' style='padding:10px;'>
     Send <b>".$amount."  XMR</b> to<br/><input type='text'  class='form-control' value='" . $array_integrated_address['integrated_address']."'>
     or scan QR Code with your mobile device<br/><br/>
-    <small>If you don't know how to pay with monero or you don't know what monero is, please go <a href='#'>here</a>. </small>
+    <small>If you don't know how to pay with monero or you don't know what monero is, please go <a href='http://www.getmonero.org/'>here</a>. </small>
     </div>
     <div class='col-sm-12 col-md-12 col-lg-12'>
         </div>
@@ -51,11 +54,21 @@ echo "<div class='row'>
                 </div>
 </div>";
 echo "<script> function verify(){ 
-$.ajax({ url : 'verify.php',
-type : 'POST', 
-data: { 'amount' : '".$amount."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."'}, 
-error: function(data){ console.log(data); } 
-success: function(msg){ console.log(msg); $('#message').text(msg); }  }); } 
-verify(); setInterval(function(){ verify()}, 5000);</script>";
+			$.ajax({ url : 'verify.php',
+				type : 'POST', 
+				data: { 'amount' : '".$amount."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'link' : '".$link."'}, 
+				success: function(msg) {
+					console.log(msg);
+					$('#message').text(msg);
+				},
+				error: function(data) {
+					console.log(data);
+				} 
+	
+			}); 
+} 
+verify();
+setInterval(function(){ verify()}, 5000);
+</script>";
 ?>
 

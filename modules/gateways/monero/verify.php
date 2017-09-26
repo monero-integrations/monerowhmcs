@@ -20,7 +20,7 @@ $fee = "0.0";
 
 
 require_once('library.php');
-function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
+function verify_payment($payment_id, $amount, $invoice_id, $fee){
       /* 
        * function for verifying payments
        * Check if a payment has been made with this payment id then notify the $
@@ -43,7 +43,7 @@ function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
 	return $message;  
 }
 
-$vefiry = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
+$vefiry = verify_payment($payment_id, $amount, $invoice_id, $fee);
 
 //need to add real code to notify the user of the current status
 echo $vefiry;

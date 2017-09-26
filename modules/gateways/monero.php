@@ -94,13 +94,11 @@ $currency = $params['currency'];
 $firstname = $params['clientdetails']['firstname'];
   $lastname = $params['clientdetails']['lastname'];
   $email = $params['clientdetails']['email'];
-  $address1 = $params['clientdetails']['address1'];
-        $address2 = $params['clientdetails']['address2'];
         $city = $params['clientdetails']['city'];
         $state = $params['clientdetails']['state'];
         $postcode = $params['clientdetails']['postcode'];
         $country = $params['clientdetails']['country'];
-$address = $params['address'];
+//$address = $params['address'];
   $systemurl = $params['systemurl'];
     // Transform Current Currency into 
 $amount_xmr = monero_changeto($amount, $currency);
@@ -129,6 +127,6 @@ $form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.p
     }
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
-$form .= '<p>'.$amount_xmr.$currency.'</p>';
+$form .= '<p>'.$amount_xmr.' '.$currency.'</p>';
     return $form;
     }

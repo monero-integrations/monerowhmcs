@@ -33,7 +33,7 @@ function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
 		if($get_payments_method["payments"][0]["amount"] >= $amount_atomic_units) {
 			$message = "Payment has been received and confirmed.";
 			$confirmed = true;
-			$transid = "0000";
+			$transid = "0";
 			logTransaction("monero",array('successful' => '0'),"Successful");            
 			addInvoicePayment($invoice_id,$transid,$amount,$fee,"monero");
 		}  

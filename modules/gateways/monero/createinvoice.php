@@ -17,7 +17,7 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for Payment confirmation";
-$address = stripslashes($_POST['address']);
+$address = $GATEWAY["address"];
 $amount = stripslashes($_POST['amount_xmr']);
 $payment_id = stripslashes($_POST['payment_id']);
 $uri  =  "monero:$address?amount=$amount?payment_id=$payment_id";

@@ -34,6 +34,7 @@ function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
 			$message = "Payment has been received and confirmed.";
 			$confirmed = true;
 			$transid = "0";
+			//confirm_payment($invoice_id, $amount);
 			logTransaction("monero",array('successful' => '0'),"Successful");            
 			addInvoicePayment($invoice_id,$transid,$amount,$fee,"monero");
 		}  
@@ -42,6 +43,16 @@ function verify_payment($payment_id, $amount, $invoice_id, $fee, $link){
 	}
 	return $message;  
 }
+/*
+function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
+	$verify = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
+	if($verify){
+		$message = "Payment has been received and confirmed.";
+	}
+	else{
+		$message = "We are waiting for your payment to be confirmed";
+	}
+} */
 
 $vefiry = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
 

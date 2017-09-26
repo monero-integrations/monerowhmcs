@@ -56,7 +56,7 @@ echo "<div class='row'>
 echo "<script> function verify(){ 
 			$.ajax({ url : 'verify.php',
 				type : 'POST', 
-				data: { 'amount' : '".$amount."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'link' : '".$link."'}, 
+				data: { 'amount' : '".$amount."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."'}, 
 				success: function(msg) {
 					console.log(msg);
 					$('#message').text(msg);

@@ -47,6 +47,7 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 		return $transactionStatus;
 	}
 	
+
 	if (isset($payment_id)) {
 	
 		if ($check_mempool) {
@@ -89,9 +90,20 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 	} else {
 		$message = "We are waiting for your payment to be confirmed.";
 		$transactionStatus = "unknown";
+
 	}
 	return $message;  
 }
+/*
+function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
+	$verify = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
+	if($verify){
+		$message = "Payment has been received and confirmed.";
+	}
+	else{
+		$message = "We are waiting for your payment to be confirmed";
+	}
+} */
 
 function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee) {
 	$postData = array(

@@ -145,9 +145,11 @@ $form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.p
     }
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
-    
+
 
 $form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
+
+
 
     return $form;
     }

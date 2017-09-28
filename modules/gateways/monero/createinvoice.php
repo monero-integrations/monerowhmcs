@@ -17,8 +17,10 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for Payment confirmation";
+
 $amount_xmr = stripslashes($_POST['amount_xmr']);
 $amount = stripslashes($_POST['amount']);
+
 $payment_id = stripslashes($_POST['payment_id']);
 $invoice_id = stripslashes($_POST['invoice_id']);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);

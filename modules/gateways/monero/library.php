@@ -11,7 +11,7 @@
  */
 class Monero_rpc
 {
-    protected $url = null, $is_debug = false, $parameters_structure = 'array';
+    protected $url = null, $is_debug = true, $parameters_structure = 'array';
     
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
@@ -92,7 +92,7 @@ class Monero_rpc
         // Request (method invocation)
         $request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams, 'id' => $requestId));
         // if is_debug mode is true then add url and request to is_debug
-        $this->debug('Url: ' . $this->url . "\r\n", false);
+        $this->debug('Url: ' . $this->url . "\r\n", true);
         $this->debug('Request: ' . $request . "\r\n", false);
         $responseMessage = $this->getResponse($request);
         // if is_debug mode is true then add response to is_debug and display it
@@ -125,6 +125,7 @@ class Monero_rpc
         {
             throw new RuntimeException('Could\'t initialize a cURL session');
         }
+        
         curl_setopt($ch, CURLOPT_URL, $this->url);
 //	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 //	curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
@@ -300,10 +301,10 @@ class Monero_rpc
         }
     }
     
-    public function make_uri($address, $amount, $recipient_name = null, $description = null)
+    public function make_uri($address, $amount_xmr, $recipient_name = null, $description = null)
     {
         // If I pass 1, it will be 0.0000001 xmr. Then 
-        $new_amount = $amount * 100000000;
+        $new_amount = $amount_xmr * 100000000;
        
         $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
         $uri = $this->_run('make_uri', $uri_params);
@@ -317,9 +318,9 @@ class Monero_rpc
         return $parsed_uri;
     }
     
-    public function transfer($amount, $address, $mixin = 4)
+    public function transfer($amount_xmr, $address, $mixin = 4)
     {
-        $new_amount = $amount  * 1000000000000;
+        $new_amount = $amount_xmr  * 1000000000000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
         $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
         $transfer_method = $this->_run('transfer', $transfer_parameters);

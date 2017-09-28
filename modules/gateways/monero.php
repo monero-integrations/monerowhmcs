@@ -25,6 +25,12 @@ return array(
             'Default' => '',
             'Description' => 'Monero Address',
         ),
+        'secretkey' => array(
+            'FriendlyName' => 'Module Secret Key',
+            'Type' => 'text',
+            'Default' => '21ieudgqwhb32i7tyg',
+            'Description' => 'Enter a unique key to verify callbacks',
+        ),
      'daemon_host' => array(
                 'FriendlyName' => 'Daemon Host',
                 'Type' => 'text',
@@ -103,10 +109,21 @@ $firstname = $params['clientdetails']['firstname'];
     // Transform Current Currency into 
 $amount_xmr = monero_changeto($amount, $currency);
 
-//$amount_xmr = $amount;
+switch ($currency) {
+    case "USD":
+        $currency_symbol = "$";
+        break;
+    case "EUR":
+        $currency_symbol = "";
+        break;
+    case "CAD":
+        $currency_symbol = "$";
+        break;
+}
+
 $payment_id = monero_payment_id();
 $post = array(
-        'invoiceId'     => $invoiceid,
+        'invoice_id'    => $invoiceid,
         'systemURL'     => $systemurl,
         'buyerName'     => $firstname . ' ' . $lastname,
         'buyerAddress1' => $address1,
@@ -118,15 +135,21 @@ $post = array(
         'buyerPhone'    => $phone,
         'address'       => $address,
         'amount_xmr'    => $amount_xmr,
+        'amount'        => $amount,
         'payment_id'    => $payment_id
     );
 $form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.php" method="POST">';
-	
+
     foreach ($post as $key => $value) {
         $form .= '<input type="hidden" name="' . $key . '" value = "' . $value .'" />';
     }
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
-$form .= '<p>'.$amount_xmr.' '.$currency.'</p>';
+
+
+$form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
+
+
+
     return $form;
     }

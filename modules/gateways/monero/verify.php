@@ -23,8 +23,8 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 require_once('library.php');
 
-$vefiry = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey);
-echo $vefiry;
+$verify = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey);
+echo $verify;
 
 
 function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey){
@@ -94,16 +94,7 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 	}
 	return $message;  
 }
-/*
-function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
-	$verify = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
-	if($verify){
-		$message = "Payment has been received and confirmed.";
-	}
-	else{
-		$message = "We are waiting for your payment to be confirmed";
-	}
-} */
+
 
 function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee) {
 	$postData = array(
@@ -123,13 +114,4 @@ function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, 
 }
 
 
-/*
-function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
-	$verify = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
-	if($verify){
-		$message = "Payment has been received and confirmed.";
-	}
-	else{
-		$message = "We are waiting for your payment to be confirmed";
-	}
-} */
+

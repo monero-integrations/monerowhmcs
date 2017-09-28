@@ -1,4 +1,5 @@
 <?php
+
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
@@ -24,6 +25,12 @@ return array(
             'Size' => '94',
             'Default' => '',
             'Description' => 'Monero Address',
+        ),
+        'secretkey' => array(
+            'FriendlyName' => 'Module Secret Key',
+            'Type' => 'text',
+            'Default' => '21ieudgqwhb32i7tyg',
+            'Description' => 'Enter a unique key to verify callbacks',
         ),
      'daemon_host' => array(
                 'FriendlyName' => 'Daemon Host',
@@ -94,21 +101,30 @@ $currency = $params['currency'];
 $firstname = $params['clientdetails']['firstname'];
   $lastname = $params['clientdetails']['lastname'];
   $email = $params['clientdetails']['email'];
-  $address1 = $params['clientdetails']['address1'];
-        $address2 = $params['clientdetails']['address2'];
         $city = $params['clientdetails']['city'];
         $state = $params['clientdetails']['state'];
         $postcode = $params['clientdetails']['postcode'];
         $country = $params['clientdetails']['country'];
-$address = $params['address'];
+//$address = $params['address'];
   $systemurl = $params['systemurl'];
     // Transform Current Currency into 
 $amount_xmr = monero_changeto($amount, $currency);
 
-//$amount_xmr = $amount;
+switch ($currency) {
+    case "USD":
+        $currency_symbol = "$";
+        break;
+    case "EUR":
+        $currency_symbol = "";
+        break;
+    case "CAD":
+        $currency_symbol = "$";
+        break;
+}
+
 $payment_id = monero_payment_id();
 $post = array(
-        'invoiceId'     => $invoiceid,
+        'invoice_id'    => $invoiceid,
         'systemURL'     => $systemurl,
         'buyerName'     => $firstname . ' ' . $lastname,
         'buyerAddress1' => $address1,
@@ -120,15 +136,19 @@ $post = array(
         'buyerPhone'    => $phone,
         'address'       => $address,
         'amount_xmr'    => $amount_xmr,
+        'amount'        => $amount,
         'payment_id'    => $payment_id
     );
 $form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.php" method="POST">';
-	
+
     foreach ($post as $key => $value) {
         $form .= '<input type="hidden" name="' . $key . '" value = "' . $value .'" />';
     }
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
-$form .= '<p>'.$amount_xmr.$currency.'</p>';
+    
+
+$form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
+
     return $form;
     }

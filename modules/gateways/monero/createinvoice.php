@@ -26,7 +26,7 @@ $invoice_id = stripslashes($_POST['invoice_id']);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];
 $uri  =  "monero:$address?amount=$amount_xmr?payment_id=$payment_id";
-`
+
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
 

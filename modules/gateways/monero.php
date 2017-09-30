@@ -32,16 +32,16 @@ return array(
             'Description' => 'Enter a unique key to verify callbacks',
         ),
      'daemon_host' => array(
-                'FriendlyName' => 'Daemon Host',
+                'FriendlyName' => 'Wallet RPC Host',
                 'Type' => 'text',
                 'Default' => 'localhost',
-                'Description' => 'Daemon Host',
+                'Description' => 'Wallet RPC Host',
 ),
         'daemon_port' => array(
-                'FriendlyName' => 'Daemon Port',
+                'FriendlyName' => 'Wallet RPC Port',
                 'Type'  => 'text',
                 'Default' => '18081',
-                'Description' => 'Daemon Port'
+                'Description' => 'Wallet RPC Port'
             )
     );
 }

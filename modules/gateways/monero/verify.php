@@ -1,11 +1,10 @@
 <?php
-include "../../../init.php"; 
+
+
+include("../../../init.php"); 
 include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 $fee = "0.0";
 $status = "unknown";
@@ -23,8 +22,6 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 require_once('library.php');
 
-$verify = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey);
-echo $verify;
 
 
 function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey){
@@ -47,6 +44,8 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 		return $transactionStatus;
 	}
 	
+	$message = "Waiting for your payment.";
+	$transactionStatus = "waiting";
 
 	if (isset($payment_id)) {
 	
@@ -59,11 +58,19 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 				if(isset($txn_amt)) { 
 					if ($txn_payment_id == $payment_id) {
 						if($txn_amt >= $amount_atomic_units) {
-							// Performs a check for any existing transactions with the same given transaction number.
-							checkCbTransID($txn_txid);
-							add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
+							$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
+							if ($transaction_exists) {
+								return "Payment has been received.";
+							} else {
+								//check one more time then add the payment if the transaction has not been added.
+								checkCbTransID($txn_txid);
+								add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
+								return "Payment has been received.";
+							}
+
 						} else {
-							$messages = "Amount too small";
+							$message = "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please contact customer service. Transaction ID: " . $txn_txid . ".";
+							logTransaction($gatewaymodule, $_POST, 'Error: ' .$message);
 						}
 					}
 				}
@@ -77,24 +84,26 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 			if(isset($txn_amt)) { 
 				if ($txn_payment_id == $payment_id) {
 					if($txn_amt >= $amount_atomic_units) {
-						// Performs a check for any existing transactions with the same given transaction number.
-						checkCbTransID($txn_txid);
-						add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
+						$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
+						if ($transaction_exists) {
+							return "Payment has been received.";
+						} else {
+							//check one more time then add the payment if the transaction has not been added.
+							checkCbTransID($txn_txid);
+							add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
+							return "Payment has been received.";
+						}
 					} else {
-						$messages = "Amount too small";
+						$message = "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please contact customer service. Transaction ID: " . $txn_txid . ".";
+						logTransaction($gatewaymodule, $_POST, 'Error: ' .$message);
 					}
 				}
 			}
 		}
-		
-	} else {
-		$message = "We are waiting for your payment to be confirmed.";
-		$transactionStatus = "unknown";
-
 	}
-	return $message;  
+	return $message;
+  
 }
-
 
 function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee) {
 	$postData = array(
@@ -108,10 +117,21 @@ function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, 
 		'fees' => $fee,
 	);
 	$results = localAPI($command, $postData, $adminUsername);
-	logTransaction($gatewaymodule, $postData, "Success");
-	$message = "Payment has been received and confirmed.";
+	logTransaction($gatewaymodule, $postData, "Success: ".$message);
 	$transactionStatus = "confirmed";
 }
 
 
+/*
+function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
+	$verify = verify_payment($payment_id, $amount, $invoice_id, $fee, $link);
+	if($verify){
+		$message = "Payment has been received and confirmed.";
+	}
+	else{
+		$message = "We are waiting for your payment to be confirmed";
+	}
+} */
 
+$vefiry = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey);
+echo $vefiry;

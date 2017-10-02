@@ -18,6 +18,8 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for your payment.";
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+$currency = stripslashes($_POST['currency']);
 $amount_xmr = stripslashes($_POST['amount_xmr']);
 $amount = stripslashes($_POST['amount']);
 $payment_id = stripslashes($_POST['payment_id']);
@@ -65,7 +67,7 @@ echo "<script> function verify(){
 
 $.ajax({ url : 'verify.php',
 	type : 'POST',
-	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."'}, 
+	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."', 'currency' : '".$currency."'}, 
 	success: function(msg) {
 		console.log(msg);
 		$('#message').text(msg);

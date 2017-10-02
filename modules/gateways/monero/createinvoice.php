@@ -36,7 +36,7 @@ echo "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3
 echo "<title>Invoice</title>";
 echo "<div class='container'>";
 echo "<div class='alert alert-warning' id='message'>".$message."</div>";
-echo "<div class='alert alert-warning'><img src='" . $gateway['systemurl'] . "/modules/gateways/monero/loading.gif' /></div>";
+echo "<div class='alert alert-warning'><img src='" . $GATEWAY['systemurl'] . "/modules/gateways/monero/loading.gif' /></div>";
 echo "<div class='row'>
  <div class='col-sm-12 col-md-12 col-lg-12'>                      
  <div class='panel panel-default' id='PaymentBox_de3a227fb470475'>

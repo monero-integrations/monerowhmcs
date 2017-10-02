@@ -18,6 +18,8 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for your payment.";
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+$currency = stripslashes($_POST['currency']);
 $amount_xmr = stripslashes($_POST['amount_xmr']);
 $amount = stripslashes($_POST['amount']);
 $payment_id = stripslashes($_POST['payment_id']);
@@ -50,7 +52,7 @@ echo "<div class='row'>
     Send <b>".$amount_xmr." XMR</b> to<br/><input type='text'  class='form-control' value='" . $array_integrated_address['integrated_address']."'>
     or scan QR Code with your mobile device<br/><br/>
     
-    <small>If you don't know how to pay with monero or you don't know what monero is, please go <a href='http://www.getmonero.org/'>here</a>. </small>
+    <small>If you need help paying with Monero or want to learn more about it, please go to the <a href='http://www.getmonero.org/'>Monero website</a>. </small>
     </div>
     <div class='col-sm-12 col-md-12 col-lg-12'>
         </div>
@@ -65,7 +67,7 @@ echo "<script> function verify(){
 
 $.ajax({ url : 'verify.php',
 	type : 'POST',
-	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."'}, 
+	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."', 'currency' : '".$currency."'}, 
 	success: function(msg) {
 		console.log(msg);
 		$('#message').text(msg);

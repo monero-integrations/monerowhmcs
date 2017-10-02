@@ -68,8 +68,9 @@ function monero_changeto($amount, $currency){
 
 function xmr_to_fiat($amount, $currency){
     $xmr_live_price = monero_retriveprice($currency);
+    $amount = $amount / 1000000000000;
 	$new_amount = $amount * $xmr_live_price;
-	$rounded_amount = round($new_amount, 4);
+	$rounded_amount = round($new_amount, 2);
     return $rounded_amount;
 }
 
@@ -97,9 +98,8 @@ global $currency_symbol;
 	$country = $params['clientdetails']['country'];
 	//$address = $params['address'];
 	$systemurl = $params['systemurl'];
-    // Transform Current Currency into 
+    // Transform Current Currency into Monero
 	$amount_xmr = monero_changeto($amount, $currency);
-
 	$payment_id = monero_payment_id();
 	$post = array(
         'invoice_id'    => $invoiceid,
@@ -115,18 +115,15 @@ global $currency_symbol;
         'address'       => $address,
         'amount_xmr'    => $amount_xmr,
         'amount'        => $amount,
-        'payment_id'    => $payment_id
+        'payment_id'    => $payment_id,
+        'currency'      => $currency     
     );
 	$form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.php" method="POST">';
-
     foreach ($post as $key => $value) {
         $form .= '<input type="hidden" name="' . $key . '" value = "' . $value .'" />';
     }
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
-    
-
 	$form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
-
     return $form;
 }

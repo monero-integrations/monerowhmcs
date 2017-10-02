@@ -24,7 +24,7 @@ $payment_id = stripslashes($_POST['payment_id']);
 $invoice_id = stripslashes($_POST['invoice_id']);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];
-$uri  =  "monero:$address?amount=$amount_xmr?payment_id=$payment_id";
+$uri  =  "monero:$address?amount=$amount_xmr";
 
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
@@ -33,8 +33,8 @@ echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
 echo "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>";
 echo "<title>Invoice</title>";
 echo "<div class='container'>";
-echo "<div class='alert alert-warning' id='message'>".$message."    <br><br><img src='" . $gateway['systemurl'] . "/modules/gateways/monero/loading.gif' />
-</div>";
+echo "<div class='alert alert-warning' id='message'>".$message."</div>";
+echo "<div class='alert alert-warning'><img src='" . $gateway['systemurl'] . "/modules/gateways/monero/loading.gif' /></div>";
 echo "<div class='row'>
  <div class='col-sm-12 col-md-12 col-lg-12'>                      
  <div class='panel panel-default' id='PaymentBox_de3a227fb470475'>

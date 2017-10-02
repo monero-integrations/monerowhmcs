@@ -1,10 +1,10 @@
 <?php
 
-
 include("../../../init.php"); 
 include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
+
 
 $fee = "0.0";
 $status = "unknown";
@@ -25,7 +25,7 @@ require_once('library.php');
 
 
 function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey){
-
+global $currency_symbol;
       /* 
        * function for verifying payments
        * Check if a payment has been made with this payment id then notify the $
@@ -38,16 +38,13 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 	//Checks invoice ID is a valid invoice number 
 	$invoice_id = checkCbInvoiceID($invoice_id, $gatewaymodule);
 
-	//Validate callback authenticity
-	if ($hash != md5($invoice_id . $payment_id . $amount_xmr . $secretKey)) {
-		$transactionStatus = 'Hash Verification Failure';
-		return $transactionStatus;
-	}
+	if ($payment_id !="") {
+		//Validate callback authenticity
+		if ($hash != md5($invoice_id . $payment_id . $amount_xmr . $secretKey)) {
+			return 'Hash Verification Failure';
+		}
 	
-	$message = "Waiting for your payment.";
-	$transactionStatus = "waiting";
-
-	if (isset($payment_id)) {
+		$message = "Waiting for your payment.";
 	
 		if ($check_mempool) {
 			$get_payments_method = $monero_daemon->get_transfers('pool', true);
@@ -55,54 +52,63 @@ function verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $s
 				$txn_amt = $transactions["amount"];
 				$txn_txid = $transactions["txid"];
 				$txn_payment_id = $transactions["payment_id"];
-				if(isset($txn_amt)) { 
+				if(isset($txn_amt)) {
+					$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
 					if ($txn_payment_id == $payment_id) {
-						if($txn_amt >= $amount_atomic_units) {
-							$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
-							if ($transaction_exists) {
+						if ($transaction_exists) {
+							if ($txn_amt >= $amount_atomic_units) {
 								return "Payment has been received.";
 							} else {
-								//check one more time then add the payment if the transaction has not been added.
-								checkCbTransID($txn_txid);
-								add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
-								return "Payment has been received.";
+								return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
 							}
-
 						} else {
-							$message = "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please contact customer service. Transaction ID: " . $txn_txid . ".";
-							logTransaction($gatewaymodule, $_POST, 'Error: ' .$message);
+							//check one more time then add the payment if the transaction has not been added.
+							checkCbTransID($txn_txid);
+							//find out how much local fiat was received.
+							$fiat_paid = xmr_to_fiat($txn_amt * 1000000000000, $currency);
+							add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $fiat_paid, $txn_amt / 1000000000000, $payment_id, $fee);
+							if ($txn_amt >= $amount_atomic_units) {
+								return "Payment has been received.";
+							} else {
+								return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
+							}
 						}
 					}
 				}
-			}		
-		}
+			}
+		}		
 		$get_payments_method = $monero_daemon->get_payments($payment_id);
 		foreach ($get_payments_method["payments"] as $tx => $transactions) {
 			$txn_amt = $transactions["amount"];
 			$txn_txid = $transactions["tx_hash"];
 			$txn_payment_id = $transactions["payment_id"];
 			if(isset($txn_amt)) { 
+				$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
 				if ($txn_payment_id == $payment_id) {
-					if($txn_amt >= $amount_atomic_units) {
-						$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
-						if ($transaction_exists) {
+					if ($transaction_exists) {
+						if ($txn_amt >= $amount_atomic_units) {
 							return "Payment has been received.";
 						} else {
-							//check one more time then add the payment if the transaction has not been added.
-							checkCbTransID($txn_txid);
-							add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee);
-							return "Payment has been received.";
+							return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
 						}
 					} else {
-						$message = "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please contact customer service. Transaction ID: " . $txn_txid . ".";
-						logTransaction($gatewaymodule, $_POST, 'Error: ' .$message);
+						//check one more time then add the payment if the transaction has not been added.
+						checkCbTransID($txn_txid);
+						$fiat_paid = xmr_to_fiat($txn_amt * 1000000000000, $currency);
+						add_payment("AddInvoicePayment", $invoice_id, $txn_txid, $gatewaymodule, $fiat_paid, $txn_amt / 1000000000000, $payment_id, $fee);
+						if ($txn_amt >= $amount_atomic_units) {
+							return "Payment has been received.";
+						} else {
+							return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
+						}
 					}
 				}
 			}
 		}
+	} else {
+		return "Error: No payment ID.";
 	}
 	return $message;
-  
 }
 
 function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, $amount_xmr, $payment_id, $fee) {
@@ -118,7 +124,6 @@ function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $amount, 
 	);
 	$results = localAPI($command, $postData, $adminUsername);
 	logTransaction($gatewaymodule, $postData, "Success: ".$message);
-	$transactionStatus = "confirmed";
 }
 
 

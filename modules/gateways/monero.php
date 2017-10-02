@@ -2,6 +2,9 @@
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
+
+
+
 function monero_MetaData()
 {
     return array(
@@ -60,6 +63,13 @@ function monero_changeto($amount, $currency){
 	$live_for_storing = $xmr_live_price * 100; //This will remove the decimal so that it can easily be stored as an integer
 	$new_amount = $amount / $xmr_live_price;
 	$rounded_amount = round($new_amount, 12);
+    return $rounded_amount;
+}
+
+function xmr_to_fiat($amount, $currency){
+    $xmr_live_price = monero_retriveprice($currency);
+	$new_amount = $amount * $xmr_live_price;
+	$rounded_amount = round($new_amount, 4);
     return $rounded_amount;
 }
 

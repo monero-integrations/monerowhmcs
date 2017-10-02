@@ -60,8 +60,6 @@ global $currency_symbol;
 							if ($txn_amt >= $amount_atomic_units) {
 								return "Payment has been received.";
 							} else {
-								//find out how much local fiat was received.
-								$fiat_paid = xmr_to_fiat($txn_amt * 1000000000000, $currency);
 								return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
 							}
 						} else {
@@ -93,7 +91,6 @@ global $currency_symbol;
 						if ($txn_amt >= $amount_atomic_units) {
 							return "Payment has been received.";
 						} else {
-							$fiat_paid = xmr_to_fiat($txn_amt * 1000000000000, $currency);
 							return "Error: Amount " . $txn_amt / 1000000000000 . " XMR too small. Please send full amount or contact customer service. Transaction ID: " . $txn_txid . ".";
 						}
 					} else {

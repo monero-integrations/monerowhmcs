@@ -9,15 +9,16 @@
  * http://implix.com
  * Modified to work with monero-rpc wallet by Serhack and cryptochangements
  */
+ 
 class Monero_rpc
 {
-    protected $url = null, $is_debug = true, $parameters_structure = 'array';
-    
+    protected $url = null, $is_debug = false, $parameters_structure = 'array';
+
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 8
     );
-    
+
     
     private $httpErrors = array(
         400 => '400 Bad Request',
@@ -32,15 +33,15 @@ class Monero_rpc
         503 => '503 Service Unavailable'
     );
    
-    public function __construct($pUrl, $pUser = null, $pPass = null)
-    {
+    public function __construct($pUrl, $pUser = null, $pPass = null) {
+
+		$gatewayx = getGatewayVariables("monero");
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded for using this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded for using this class!');
-    
-        $this->url = $pUrl;
-	$this->username = $pUser;
-	$this->password = $pPass;
-    }
+		$this->url = $gatewayx['daemon_host']. ":" .$gatewayx['daemon_port'] . "/json_rpc";
+		$this->username = $gatewayx['daemon_user'];
+		$this->password = $gatewayx['daemon_pass'];
+	}
    
     private function getHttpErrorMessage($pErrorNumber)
     {
@@ -127,8 +128,8 @@ class Monero_rpc
         }
         
         curl_setopt($ch, CURLOPT_URL, $this->url);
-//	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-//	curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+		curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));

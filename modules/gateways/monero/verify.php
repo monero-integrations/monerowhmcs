@@ -55,7 +55,6 @@ global $currency_symbol;
 				if(isset($txn_amt)) {
 					$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
 					if ($txn_payment_id == $payment_id) {
-					return $payment_id;
 						if ($transaction_exists) {
 							if ($txn_amt >= $amount_atomic_units) {
 								return "Payment has been received.";
@@ -86,7 +85,6 @@ global $currency_symbol;
 			if(isset($txn_amt)) { 
 				$transaction_exists = mysql_fetch_array(mysql_query("SELECT * FROM `tblaccounts` WHERE transid = '$txn_txid'"));
 				if ($txn_payment_id == $payment_id) {
-									return $payment_id;
 					if ($transaction_exists) {
 						if ($txn_amt >= $amount_atomic_units) {
 							return "Payment has been received.";

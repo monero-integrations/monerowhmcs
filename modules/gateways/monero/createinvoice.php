@@ -20,6 +20,7 @@ function monero_payment_id(){
     if(!isset($_COOKIE['payment_id'])) { 
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
 		setcookie('payment_id', $payment_id, time()+2700);
+		return $payment_id;
 	} else {
 		$payment_id = $_COOKIE['payment_id'];
 		return $payment_id;

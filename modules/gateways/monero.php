@@ -77,15 +77,7 @@ function xmr_to_fiat($amount, $currency){
     return $rounded_amount;
 }
 
-function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
-		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
-		setcookie('payment_id', $payment_id, time()+2700);
-	} else {
-		$payment_id = $_COOKIE['payment_id'];
-		return $payment_id;
-	}
-}
+
 
 function monero_link($params){
 global $currency_symbol;
@@ -112,7 +104,7 @@ if(!$gateway["type"]) die("Module not activated");
 	$systemurl = $params['systemurl'];
     // Transform Current Currency into Monero
 	$amount_xmr = monero_changeto($amount, $currency);
-	$payment_id = monero_payment_id();
+	
 	$post = array(
         'invoice_id'    => $invoiceid,
         'systemURL'     => $systemurl,
@@ -127,7 +119,6 @@ if(!$gateway["type"]) die("Module not activated");
         'address'       => $address,
         'amount_xmr'    => $amount_xmr,
         'amount'        => $amount,
-        'payment_id'    => $payment_id,
         'currency'      => $currency     
     );
 	$form = '<form action="' . $systemurl . '/modules/gateways/monero/createinvoice.php" method="POST">';

@@ -22,7 +22,8 @@ function monero_Config(){
 		'daemon_host' => array('FriendlyName' => 'Wallet RPC Host','Type' => 'text','Default' => 'localhost','Description' => 'Connection settings for the Monero Wallet RPC daemon.'),
 		'daemon_port' => array('FriendlyName' => 'Wallet RPC Port','Type'  => 'text','Default' => '18081','Description' => ''),
 		'daemon_user' => array('FriendlyName' => 'Wallet RPC Username','Type'  => 'text','Default' => '','Description' => ''),
-		'daemon_pass' => array('FriendlyName' => 'Wallet RPC Password','Type'  => 'text','Default' => '','Description' => '')
+		'daemon_pass' => array('FriendlyName' => 'Wallet RPC Password','Type'  => 'text','Default' => '','Description' => ''),
+		'discount_percentage' => array('FriendlyName' => 'Discount Percentage','Type'  => 'text','Default' => '5%','Description' => 'Percentage discount for paying with Monero.')
     );
 }
 
@@ -64,7 +65,7 @@ function monero_changeto($amount, $currency){
     $xmr_live_price = monero_retriveprice($currency);
 	$live_for_storing = $xmr_live_price * 100; //This will remove the decimal so that it can easily be stored as an integer
 	$new_amount = $amount / $xmr_live_price;
-	$rounded_amount = round($new_amount, 12);
+	$rounded_amount = round($new_amount, 8);
     return $rounded_amount;
 }
 
@@ -88,8 +89,17 @@ function monero_payment_id(){
 
 function monero_link($params){
 global $currency_symbol;
+
+$gatewaymodule = "monero";
+$gateway = getGatewayVariables($gatewaymodule);
+if(!$gateway["type"]) die("Module not activated");
+
+
 	$invoiceid = $params['invoiceid'];
 	$amount = $params['amount'];
+	$discount_setting = $gateway['discount_percentage'];
+	$discount_percentage = 100 - (preg_replace("/[^0-9]/", "", $discount_setting));
+	$amount = money_format('%i', $amount * ($discount_percentage / 100));
 	$currency = $params['currency'];
 	$firstname = $params['clientdetails']['firstname'];
 	$lastname = $params['clientdetails']['lastname'];
@@ -127,5 +137,8 @@ global $currency_symbol;
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
 	$form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
+	if ($discount_setting > 0) {
+		$form .='<p><small>Discount Applied: ' . preg_replace("/[^0-9]/", "", $discount_setting) . '% </small></p>';
+	}
     return $form;
 }

@@ -110,6 +110,9 @@ class Monero_rpc
         {
             $errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ' . "\n" .
                 'Request: ' . $request . '; ';
+                if ($responseDecoded['error']['message'] == "Method not found") {
+                	$errorMessage .= " Check the daemon hostname and daemon port settings in the Monero Pyament Gateway WHMCS config.";
+                }
             if (isset($responseDecoded['error']['data']))
             {
                 $errorMessage .= "\n" . 'Error data: ' . $responseDecoded['error']['data'];

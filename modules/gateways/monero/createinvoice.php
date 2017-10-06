@@ -15,6 +15,17 @@ require_once('library.php');
 
 $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
+
+function monero_payment_id(){
+    if(!isset($_COOKIE['payment_id'])) { 
+		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
+		setcookie('payment_id', $payment_id, time()+2700);
+	} else {
+		$payment_id = $_COOKIE['payment_id'];
+		return $payment_id;
+	}
+}
+
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for your payment.";
@@ -22,7 +33,7 @@ $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 $currency = stripslashes($_POST['currency']);
 $amount_xmr = stripslashes($_POST['amount_xmr']);
 $amount = stripslashes($_POST['amount']);
-$payment_id = stripslashes($_POST['payment_id']);
+$payment_id = monero_payment_id();
 $invoice_id = stripslashes($_POST['invoice_id']);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];

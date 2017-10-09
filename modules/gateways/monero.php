@@ -27,11 +27,61 @@ function monero_Config(){
     );
 }
 
+/*
+*  
+*  Get the current XMR price in several currencies
+*  
+*  @param String $currencies  List of currency codes separated by comma
+*  
+*  @return String  A json string in the format {"CURRENCY_CODE":PRICE}
+*  
+*/
+function monero_retrivePriceList($currencies = 'BTC,USD,EUR,CAD,INR,GBP,BRL') {
+	
+	$source = 'https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms='.$currencies.'&extraParams=monero_woocommerce';
+	
+	if (ini_get('allow_url_fopen')) {
+		
+		return file_get_contents($source);
+		
+	}
+	
+	if (!function_exists('curl_init')) {
+		
+		echo 'cURL not available.';
+		
+		return false;
+		
+	}
+	
+	$options = array (
+		CURLOPT_URL            => $source,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CONNECTTIMEOUT => 10,
+		CURLOPT_TIMEOUT        => 20,
+	);
+	
+	$ch = curl_init();
+	curl_setopt_array($ch, $options);
+	
+	$xmr_price = curl_exec($ch);
+	
+	curl_close($ch);
+	
+	if ($xmr_price === false) {
+		
+		echo 'Error while retrieving XMR price list';
+		
+	}
+	
+	return $xmr_price;
+	
+}
 
 function monero_retriveprice($currency) {
 	global $currency_symbol;
-    $xmr_price = file_get_contents('https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=BTC,USD,EUR,CAD,INR,GBP&extraParams=monero_woocommerce');
-	$price = json_decode($xmr_price, TRUE);
+	$xmr_price = monero_retrivePriceList('BTC,USD,EUR,CAD,INR,GBP,BRL');
+    $price = json_decode($xmr_price, TRUE);
 	if(!isset($price)){
 		echo "There was an error";
 	}
@@ -54,6 +104,10 @@ function monero_retriveprice($currency) {
 	if ($currency == 'INR'){
 		$currency_symbol = "₹";
 		return $price['INR'];
+	}
+	if ($currency == 'BRL'){
+		$currency_symbol = "R$ ";
+		return $price['BRL'];
 	}
 	if($currency == 'XMR'){
 		$price = '1';

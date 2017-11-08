@@ -42,7 +42,7 @@ $uri  =  "monero:$address?amount=$amount_xmr";
 
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
-
+echo " <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
 echo "<title>Invoice</title>";
 echo "
@@ -50,7 +50,7 @@ echo "
         <!--Import Google Icon Font-->
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
-        <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>
+       
         <!--Let browser know website is optimized for mobile-->
             <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
             </head>

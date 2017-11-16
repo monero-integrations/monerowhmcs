@@ -42,7 +42,7 @@ $uri  =  "monero:$address?amount=$amount_xmr";
 
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
-echo " <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>";
+echo " <link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
 echo "<title>Invoice</title>";
 echo "

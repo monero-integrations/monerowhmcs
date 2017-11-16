@@ -9,15 +9,23 @@ This plugin is rather simple but there are a few things that need to be set up b
 * The Monero wallet-cli and Monero wallet-rpc tools found [here](https://getmonero.org/downloads/)
 
 * [WHMCS](https://www.whmcs.com/)
-This Monero plugin is an payment gateway for WHMCS
+This Monero plugin is a payment gateway for WHMCS
 
 ## Step 1: Activating the plugin
 * Downloading: First of all, you will need to download the plugin.  If you wish, you can also download the latest source code from GitHub. This can be done with the command `git clone https://github.com/monero-integrations/monerowhmcs.git` or can be downloaded as a zip file from the GitHub web page.
 
 
-* Put the plugin in the correct directory: You will need to put the folder named `monero` from this repo/unzipped release into the wordpress plugins directory. This can be found at `whmcspath/module/gateways/`
+* Put the plugin in the correct directory: You will need to copy `monero.php` and the folder named `monero` from this repo/unzipped release into the WHMCS Payment Gateways directory. This can be found at `whmcspath/modules/gateways/`
 
-* Activate the plugin from the WordPress admin panel: Once you login to the admin panel in WHMCS, click on "Payment Gateways" under "Settings". Then simply click "Activate" where it says "Monero - Payment Gateway"
+* Activate the plugin from the WHMCS admin panel: Once you login to the admin panel in WHMCS, click on "Setup -> Payments -> Payment Gateways". Click on "All Payment Gateways". Then click on the "Monero" gateway to activate it.
+
+* Enter a Module Secret Key.  This can be andy random text and is used to verify payments.  
+
+* Enter the values for Wallet RPC Host, Wallet RPC Port, Username, and Password (these are from monero-wallet-rpc below).  Optionally enter a percentage discount for all invoices paid via Monero.
+
+* Optionally install the addon module to disable WHMCS fraud checking when using Monero. You will need to copy the folder `addons/moneroenable/` from this repo/unzipped release into the WHMCS Addons directory. This can be found at `whmcspath/addons/`.  
+
+* Activate the Monero Enabler addon from the WHMCS admin panel: Click on "Setup -> Addon Modules". Find "Monero Enabler" and click on "Activate". Click "Configure" and choose the Monero Payment Gateway in the drop down list. Check the box for "Enable checking for payment method by module" and click "Save Changes".
 
 ## Step 2: Get a monero daemon to connect to
 

@@ -57,7 +57,7 @@ echo "
             <body>
             <!-- page container  -->
             <div class='page-container'>
-	    <div class='alert alert-warning' id='message'>".$message."</div>;
+	    <div class='alert alert-warning' id='message'>".$message."</div><br>
             <!-- monero container payment box -->
             <div class='container-xmr-payment'>
             <!-- header -->

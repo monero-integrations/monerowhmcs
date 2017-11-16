@@ -42,27 +42,54 @@ $uri  =  "monero:$address?amount=$amount_xmr";
 
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
-echo " <link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
+echo "<link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
+echo  "<script src='/modules/gateways/monero/spin.js'></script>";
+
+
 echo "<title>Invoice</title>";
-echo "
-        <head>
+echo "<head>
         <!--Import Google Icon Font-->
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
-       
         <!--Let browser know website is optimized for mobile-->
             <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
             </head>
             <body>
             <!-- page container  -->
             <div class='page-container'>
-	    <div class='alert alert-warning' id='message'>".$message."</div><br>
-            <!-- monero container payment box -->
+                <img src='/modules/gateways/monero/monerologo.png' width='200' />
+
+        <div class='progress' id='progress'></div>
+
+			<script>
+				var opts = {
+					lines: 10, // The number of lines to draw
+					length: 7, // The length of each line
+					width: 4, // The line thickness
+					radius: 10, // The radius of the inner circle
+					corners: 1, // Corner roundness (0..1)
+					rotate: 0, // The rotation offset
+					color: '#000', // #rgb or #rrggbb
+					speed: 1, // Rounds per second
+					trail: 60, // Afterglow percentage
+					shadow: false, // Whether to render a shadow
+					hwaccel: false, // Whether to use hardware acceleration
+					className: 'spinner', // The CSS class to assign to the spinner
+					zIndex: 2e9, // The z-index (defaults to 2000000000)
+					top: 25, // Top position relative to parent in px
+					left: 0 // Left position relative to parent in px
+				};
+				var target = document.getElementById('progress');
+				var spinner = new Spinner(opts).spin(target);
+			</script>
+			
+        <div id='container'></div>
+        	    <div class='alert alert-warning' id='message'>".$message."</div><br>
+          <!-- monero container payment box -->
             <div class='container-xmr-payment'>
             <!-- header -->
             <div class='header-xmr-payment'>
-            <span class='logo-xmr'><img src='img/logomonero.png' /></span>
             <span class='xmr-payment-text-header'><h2>MONERO PAYMENT</h2></span>
             </div>
             <!-- end header -->
@@ -70,7 +97,7 @@ echo "
             <div class='content-xmr-payment'>
             <div class='xmr-amount-send'>
             <span class='xmr-label'>Send:</span>
-            <div class='xmr-amount-box'>".$amount_xmr."</div><div class='xmr-box'>XMR</div>
+            <div class='xmr-amount-box'>".$amount_xmr." XMR ($" . $amount . " " . $currency .") </div><div class='xmr-box'>XMR</div>
             </div>
             <div class='xmr-address'>
             <span class='xmr-label'>To this address:</span>
@@ -115,10 +142,10 @@ $.ajax({ url : 'verify.php',
         
     }
 	
+	
 			}); 
 } 
 verify();
 setInterval(function(){ verify()}, 5000);
 </script>";
 ?>
-

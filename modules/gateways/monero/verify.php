@@ -105,10 +105,10 @@ function add_payment($command, $invoice_id, $txn_txid, $gatewaymodule, $fiat_pai
 		'paymentid' => $payment_id,
 		'fees' => $fee,
 	);
-	$results = localAPI($command, $postData, $adminUsername);
+	// Add the invoice payment - either of the next two lines work
+	// $results = localAPI($command, $postData, $adminUsername);
+    	addInvoicePayment($invoice_id,$txn_txid,$fiat_paid,$fee,$gatewaymodule);
 	logTransaction($gatewaymodule, $postData, "Success: ".$message);
-	addInvoicePayment($invoice_id,$txn_txid,$fiat_paid,$fee,$gatewaymodule);
-
 }
 
 

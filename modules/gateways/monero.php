@@ -23,7 +23,7 @@ function monero_Config(){
 		'daemon_port' => array('FriendlyName' => 'Wallet RPC Port','Type'  => 'text','Default' => '18081','Description' => ''),
 		'daemon_user' => array('FriendlyName' => 'Wallet RPC Username','Type'  => 'text','Default' => '','Description' => ''),
 		'daemon_pass' => array('FriendlyName' => 'Wallet RPC Password','Type'  => 'text','Default' => '','Description' => ''),
-		'discount_percentage' => array('FriendlyName' => 'Discount Percentage','Type'  => 'text','Default' => '5%','Description' => 'Percentage discount for paying with Monero.')
+		'discount_percentage' => array('FriendlyName' => 'Discount Percentage','Type'  => 'text','Default' => '0%','Description' => 'Percentage discount for paying with Monero.')
     );
 }
 

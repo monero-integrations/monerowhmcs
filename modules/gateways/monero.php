@@ -23,7 +23,7 @@ function monero_Config(){
 		'daemon_port' => array('FriendlyName' => 'Wallet RPC Port','Type'  => 'text','Default' => '18081','Description' => ''),
 		'daemon_user' => array('FriendlyName' => 'Wallet RPC Username','Type'  => 'text','Default' => '','Description' => ''),
 		'daemon_pass' => array('FriendlyName' => 'Wallet RPC Password','Type'  => 'text','Default' => '','Description' => ''),
-		'discount_percentage' => array('FriendlyName' => 'Discount Percentage','Type'  => 'text','Default' => '0%','Description' => 'Percentage discount for paying with Monero.')
+		'bonus_percentage' => array('FriendlyName' => 'Bonus Percentage','Type'  => 'text','Default' => '5%','Description' => 'Percentage Bonus for paying with Monero.  Applied to clients Credit Balance.')
     );
 }
 
@@ -77,7 +77,6 @@ function monero_retrivePriceList($currencies = 'BTC,USD,EUR,CAD,INR,GBP,BRL') {
 	return $xmr_price;
 	
 }
-
 function monero_retriveprice($currency) {
 	global $currency_symbol;
 	$xmr_price = monero_retrivePriceList('BTC,USD,EUR,CAD,INR,GBP,BRL');
@@ -115,11 +114,12 @@ function monero_retriveprice($currency) {
 	}
 }
 
+
 function monero_changeto($amount, $currency){
     $xmr_live_price = monero_retriveprice($currency);
 	$live_for_storing = $xmr_live_price * 100; //This will remove the decimal so that it can easily be stored as an integer
 	$new_amount = $amount / $xmr_live_price;
-	$rounded_amount = round($new_amount, 12);
+	$rounded_amount = round($new_amount, 8);
     return $rounded_amount;
 }
 
@@ -131,8 +131,6 @@ function xmr_to_fiat($amount, $currency){
     return $rounded_amount;
 }
 
-
-
 function monero_link($params){
 global $currency_symbol;
 
@@ -143,10 +141,12 @@ if(!$gateway["type"]) die("Module not activated");
 
 	$invoiceid = $params['invoiceid'];
 	$amount = $params['amount'];
-	$discount_setting = $gateway['discount_percentage'];
-	$discount_percentage = 100 - (preg_replace("/[^0-9]/", "", $discount_setting));
-	$amount = money_format('%i', $amount * ($discount_percentage / 100));
+
+ 	$bonus_setting = $gateway['bonus_percentage'];
+ 	$bonus_percentage = 100 - (preg_replace("/[^0-9]/", "", $bonus_setting));
+// 	$amount = money_format('%i', $amount * ($bonus_percentage / 100));
 	$currency = $params['currency'];
+	$client_id = $params['clientdetails']['id'];
 	$firstname = $params['clientdetails']['firstname'];
 	$lastname = $params['clientdetails']['lastname'];
 	$email = $params['clientdetails']['email'];
@@ -158,7 +158,6 @@ if(!$gateway["type"]) die("Module not activated");
 	$systemurl = $params['systemurl'];
     // Transform Current Currency into Monero
 	$amount_xmr = monero_changeto($amount, $currency);
-	
 	$post = array(
         'invoice_id'    => $invoiceid,
         'systemURL'     => $systemurl,
@@ -173,7 +172,8 @@ if(!$gateway["type"]) die("Module not activated");
         'address'       => $address,
         'amount_xmr'    => $amount_xmr,
         'amount'        => $amount,
-        'currency'      => $currency     
+        'currency'      => $currency,
+        'client_id'      => $client_id     
     );
 	$form = '<form action="' . $systemurl . '/modules/gateways/monero/createinvoice.php" method="POST">';
     foreach ($post as $key => $value) {
@@ -182,8 +182,8 @@ if(!$gateway["type"]) die("Module not activated");
     $form .= '<input type="submit" value="' . $params['langpaynow'] . '" />';
     $form .= '</form>';
 	$form .= '<p>'.$amount_xmr. " XMR (". $currency_symbol . $amount . " " . $currency .')</p>';
-	if ($discount_setting > 0) {
-		$form .='<p><small>Discount Applied: ' . preg_replace("/[^0-9]/", "", $discount_setting) . '% </small></p>';
+	if ($bonus_setting > 0) {
+		$form .='<p><small>Bonus to be applied: ' . preg_replace("/[^0-9]/", "", $bonus_setting) . '% </small></p>';
 	}
     return $form;
 }

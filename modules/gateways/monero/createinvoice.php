@@ -86,7 +86,7 @@ echo "<head>
 			
         <div id='container'></div>
         	    <div class='alert alert-warning' id='message'>".$message."</div><br>
-          <!-- monero container payment box -->
+          <!-- Monero container payment box -->
             <div class='container-xmr-payment'>
             <!-- header -->
             <div class='header-xmr-payment'>
@@ -116,7 +116,7 @@ echo "<head>
             </div>
             <!-- end footer xmr payment -->
             </div>
-            <!-- end monero container payment box -->
+            <!-- end Monero container payment box -->
             </div>
             <!-- end page container  -->
             </body>

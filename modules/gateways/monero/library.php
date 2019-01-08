@@ -38,7 +38,7 @@ class Monero_rpc
 		$gatewayx = getGatewayVariables("monero");
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded for using this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded for using this class!');
-		$this->url = $gatewayx['daemon_host']. ":" .$gatewayx['daemon_port'] . "/json_rpc";
+		$this->url = "http://" .$gatewayx['daemon_host']. ":" .$gatewayx['daemon_port'] . "/json_rpc";
 		$this->username = $gatewayx['daemon_user'];
 		$this->password = $gatewayx['daemon_pass'];
 	}

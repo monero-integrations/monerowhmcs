@@ -16,15 +16,15 @@ require_once('library.php');
 $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 
-function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
+function monero_payment_id($invoice_id){
+    if(!isset($_COOKIE["payment_id$invoice_id"])) { 
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
-		setcookie('payment_id', $payment_id, time()+2700);
+		// create one cookie per invoice_id.
+		setcookie("payment_id$invoice_id", $payment_id, time()+2700);
 	} else {
-		$payment_id = $_COOKIE['payment_id'];
+		$payment_id = $_COOKIE["payment_id$invoice_id"];
     }
 		return $payment_id;
-	
 }
 
 $monero_daemon = new Monero_rpc($link);
@@ -34,8 +34,9 @@ $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 $currency = stripslashes($_POST['currency']);
 $amount_xmr = stripslashes($_POST['amount_xmr']);
 $amount = stripslashes($_POST['amount']);
-$payment_id = monero_payment_id();
 $invoice_id = stripslashes($_POST['invoice_id']);
+$client_id = stripslashes($_POST['client_id']);
+$payment_id = monero_payment_id($invoice_id);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];
 $uri  =  "monero:$address?amount=$amount_xmr";
@@ -127,7 +128,7 @@ echo "<script> function verify(){
 
 $.ajax({ url : 'verify.php',
 	type : 'POST',
-	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."', 'currency' : '".$currency."'}, 
+	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."', 'currency' : '".$currency."', 'client_id' : '".$client_id."'}, 
 	success: function(msg) {
 		console.log(msg);
 		$('#message').text(msg);

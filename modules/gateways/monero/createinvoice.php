@@ -16,15 +16,17 @@ require_once('library.php');
 $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 
-function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
+
+function monero_payment_id($invoice_id){
+	$invoice_id = checkCbInvoiceID($invoice_id, "monero");
+   	if(!isset($_COOKIE["payment_id$invoice_id"])) { 
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
-		setcookie('payment_id', $payment_id, time()+2700);
+		// create cookie per invoice_id.
+		setcookie("payment_id$invoice_id", $payment_id, time()+2700);
 	} else {
-		$payment_id = $_COOKIE['payment_id'];
-    }
-		return $payment_id;
-	
+		$payment_id = $_COOKIE["payment_id$invoice_id"];
+    	}
+	return $payment_id;
 }
 
 $monero_daemon = new Monero_rpc($link);

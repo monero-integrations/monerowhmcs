@@ -1,35 +1,37 @@
 <?php
-include("../../../init.php"); 
-include("../../../includes/functions.php");
-include("../../../includes/gatewayfunctions.php");
-include("../../../includes/invoicefunctions.php");
+include('../../../init.php');
+include('../../../includes/functions.php');
+include('../../../includes/gatewayfunctions.php');
+include('../../../includes/invoicefunctions.php');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+use Illuminate\Database\Capsule\Manager as Capsule;
 
-$gatewaymodule = "monero";
+$gatewaymodule = 'monero';
 $GATEWAY = getGatewayVariables($gatewaymodule);
-if(!$GATEWAY["type"]) die("Module not activated");
+if (!$GATEWAY['type']) {
+	die('Module not activated');
+}
 require_once('library.php');
 
-$link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
+$link = $GATEWAY['daemon_host'] . ':' . $GATEWAY['daemon_port'] . '/json_rpc';
 
-
-function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
+function monero_payment_id() {
+	if (!isset($_COOKIE['payment_id'])) {
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
-		setcookie('payment_id', $payment_id, time()+2700);
+		setcookie('payment_id', $payment_id, time() + 2700);
 	} else {
 		$payment_id = $_COOKIE['payment_id'];
-    }
-		return $payment_id;
-	
+	}
+
+	return $payment_id;
 }
 
 $monero_daemon = new Monero_rpc($link);
 
-$message = "Waiting for your payment.";
+$message = 'Waiting for your payment.';
 $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 $currency = stripslashes($_POST['currency']);
 $amount_xmr = stripslashes($_POST['amount_xmr']);
@@ -39,15 +41,15 @@ $invoice_id = stripslashes($_POST['invoice_id']);
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];
 $uri  =  "monero:$address?amount=$amount_xmr";
-
+$url  = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->first();
+$system_url = $url->value;
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
 echo "<link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
-echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
+echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
 echo  "<script src='/modules/gateways/monero/spin.js'></script>";
 
-
-echo "<title>Invoice</title>";
+echo '<title>Invoice</title>';
 echo "<head>
         <!--Import Google Icon Font-->
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
@@ -85,7 +87,7 @@ echo "<head>
 			</script>
 			
         <div id='container'></div>
-        	    <div class='alert alert-warning' id='message'>".$message."</div><br>
+        	    <div class='alert alert-warning' id='message'>" . $message . "</div><br>
           <!-- Monero container payment box -->
             <div class='container-xmr-payment'>
             <!-- header -->
@@ -97,15 +99,15 @@ echo "<head>
             <div class='content-xmr-payment'>
             <div class='xmr-amount-send'>
             <span class='xmr-label'>Send:</span>
-            <div class='xmr-amount-box'>".$amount_xmr." XMR ($" . $amount . " " . $currency .") </div><div class='xmr-box'>XMR</div>
+            <div class='xmr-amount-box'>" . $amount_xmr . ' XMR ($' . $amount . ' ' . $currency . ") </div><div class='xmr-box'>XMR</div>
             </div>
             <div class='xmr-address'>
             <span class='xmr-label'>To this address:</span>
-            <div class='xmr-address-box'>". $array_integrated_address['integrated_address']."</div>
+            <div class='xmr-address-box'>" . $array_integrated_address['integrated_address'] . "</div>
             </div>
             <div class='xmr-qr-code'>
             <span class='xmr-label'>Or scan QR:</span>
-            <div class='xmr-qr-code-box'><img src='https://api.qrserver.com/v1/create-qr-code/? size=200x200&data=".$uri."' /></div>
+            <div class='xmr-qr-code-box'><img src='https://api.qrserver.com/v1/create-qr-code/? size=200x200&data=" . $uri . "' /></div>
             </div>
             <div class='clear'></div>
             </div>
@@ -121,19 +123,18 @@ echo "<head>
             <!-- end page container  -->
             </body>
         ";
-	    
 
 echo "<script> function verify(){ 
 
 $.ajax({ url : 'verify.php',
 	type : 'POST',
-	data: { 'amount_xmr' : '".$amount_xmr."', 'payment_id' : '".$payment_id."', 'invoice_id' : '".$invoice_id."', 'amount' : '".$amount."', 'hash' : '".$hash."', 'currency' : '".$currency."'}, 
+	data: { 'amount_xmr' : '" . $amount_xmr . "', 'payment_id' : '" . $payment_id . "', 'invoice_id' : '" . $invoice_id . "', 'amount' : '" . $amount . "', 'hash' : '" . $hash . "', 'currency' : '" . $currency . "'}, 
 	success: function(msg) {
 		console.log(msg);
 		$('#message').text(msg);
 		if(msg=='Payment has been received.') {
 			//redirect to Paid invoice
-            window.location.href = '/viewinvoice.php?id=$invoice_id';
+            window.location.href = '$system_url/viewinvoice.php?id=$invoice_id';
 		}
 	},									
    error: function (req, status, err) {
@@ -148,4 +149,3 @@ $.ajax({ url : 'verify.php',
 verify();
 setInterval(function(){ verify()}, 5000);
 </script>";
-?>

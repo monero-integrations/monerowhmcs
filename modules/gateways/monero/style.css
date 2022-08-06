@@ -12,20 +12,6 @@
 
 }
 
-#wrapper {
-    display: table;
-    table-layout: fixed;
-
-    width:90%;
-    /* height:100px;
-    background-color:Gray; */
-}
-#wrapper div {
-    display: table-cell;
-    /* height:100px; */
-}
-
-
 .header-xmr-payment {
     height: 74px;
     background-image: url("/modules/gateways/monero/background.png");
@@ -81,18 +67,9 @@ span.xmr-payment-text-header {
     float: left;
 }
 
-.xmr-amount-send-copy {
-    /* float: inline-end; */
-    /* background-color: #fff; */
-    border-style: solid;
-    /* border-width: 1px; */
-    /* border-color: #ccc; */
-}
-
 .clear {
     clear: both;
 }
-
 
 
 .xmr-amount-box {

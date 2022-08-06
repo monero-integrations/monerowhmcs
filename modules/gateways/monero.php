@@ -36,7 +36,7 @@ function monero_Config(){
 *  @return String  A json string in the format {"CURRENCY_CODE":PRICE}
 *  
 */
-function monero_retrivePriceList($currencies = 'BTC,USD,EUR,CAD,INR,GBP,BRL') {
+function monero_retrieve_price_list($currencies = 'BTC,USD,EUR,CAD,INR,GBP,BRL') {
 	
 	$source = 'https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms='.$currencies.'&extraParams=monero_woocommerce';
 	
@@ -78,9 +78,9 @@ function monero_retrivePriceList($currencies = 'BTC,USD,EUR,CAD,INR,GBP,BRL') {
 	
 }
 
-function monero_retriveprice($currency) {
+function monero_retrieve_price($currency) {
 	global $currency_symbol;
-	$xmr_price = monero_retrivePriceList('BTC,USD,EUR,CAD,INR,GBP,BRL');
+	$xmr_price = monero_retrieve_price_list('BTC,USD,EUR,CAD,INR,GBP,BRL');
     $price = json_decode($xmr_price, TRUE);
 	if(!isset($price)){
 		echo "There was an error";
@@ -116,7 +116,7 @@ function monero_retriveprice($currency) {
 }
 
 function monero_changeto($amount, $currency){
-    $xmr_live_price = monero_retriveprice($currency);
+    $xmr_live_price = monero_retrieve_price($currency);
 	$live_for_storing = $xmr_live_price * 100; //This will remove the decimal so that it can easily be stored as an integer
 	$new_amount = $amount / $xmr_live_price;
 	$rounded_amount = round($new_amount, 12);
@@ -124,7 +124,7 @@ function monero_changeto($amount, $currency){
 }
 
 function xmr_to_fiat($amount, $currency){
-    $xmr_live_price = monero_retriveprice($currency);
+    $xmr_live_price = monero_retrieve_price($currency);
     $amount = $amount / 1000000000000;
 	$new_amount = $amount * $xmr_live_price;
 	$rounded_amount = round($new_amount, 2);

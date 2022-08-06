@@ -42,12 +42,13 @@ $array_integrated_address = $monero_daemon->make_integrated_address($payment_id)
 $address = $array_integrated_address['integrated_address'];
 $uri  =  "monero:$address?amount=$amount_xmr";
 $url  = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->first();
-$system_url = $url->value;
+$system_url = rtrim($url->value, '/');  // Strips default trailing / if there
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
 echo "<link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
 echo  "<script src='/modules/gateways/monero/spin.js'></script>";
+echo  '<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>';
 
 echo '<title>Invoice</title>';
 echo "<head>
@@ -84,6 +85,7 @@ echo "<head>
 				};
 				var target = document.getElementById('progress');
 				var spinner = new Spinner(opts).spin(target);
+                new ClipboardJS('.btn');
 			</script>
 			
         <div id='container'></div>
@@ -98,12 +100,25 @@ echo "<head>
             <!-- xmr content box -->
             <div class='content-xmr-payment'>
             <div class='xmr-amount-send'>
+            <div>
             <span class='xmr-label'>Send:</span>
-            <div class='xmr-amount-box'>" . $amount_xmr . ' XMR ($' . $amount . ' ' . $currency . ") </div><div class='xmr-box'>XMR</div>
+            <div id='amount_xmr' value='$amount_xmr' class='xmr-amount-box'>$amount_xmr</div><div class='xmr-box'>XMR</div>
+            <button class='btn xmr-box-copy' data-clipboard-target='#amount_xmr'><img class='clippy' src='clippy.png' width='20' title='Copy to clipboard' alt='Copy to clipboard' /></button>
+            </div>
+            <br>
+            <br>
+            <br>
+            <span class='xmr-label'>Conversion</span>
+            <div class='xmr-amount-box'>$amount</div><div class='xmr-box'>$currency</div>
+            </div>
             </div>
             <div class='xmr-address'>
             <span class='xmr-label'>To this address:</span>
-            <div class='xmr-address-box'>" . $array_integrated_address['integrated_address'] . "</div>
+            <div class='xmr-address-box'><p id='xmr_address' value='$address'>$address</p>
+            <button class='btn' data-clipboard-target='#xmr_address'>
+            <img src='clippy.png' width='20' title='Copy to clipboard' alt='Copy to clipboard' />
+            </button>
+            </div>
             </div>
             <div class='xmr-qr-code'>
             <span class='xmr-label'>Or scan QR:</span>
@@ -124,7 +139,9 @@ echo "<head>
             </body>
         ";
 
-echo "<script> function verify(){ 
+
+echo "<script> 
+function verify(){ 
 
 $.ajax({ url : 'verify.php',
 	type : 'POST',

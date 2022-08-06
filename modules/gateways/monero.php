@@ -140,14 +140,16 @@ function monero_link($params) {
 	$discount_percentage = 100 - (preg_replace('/[^0-9]/', '', $discount_setting));
 	$amount = money_format('%i', $amount * ($discount_percentage / 100));
 	$currency = $params['currency'];
+	$client_id = $params['clientdetails']['id'];
 	$firstname = $params['clientdetails']['firstname'];
+	$phone = $params['clientdetails']['firstname'];
 	$lastname = $params['clientdetails']['lastname'];
 	$email = $params['clientdetails']['email'];
 	$city = $params['clientdetails']['city'];
 	$state = $params['clientdetails']['state'];
 	$postcode = $params['clientdetails']['postcode'];
 	$country = $params['clientdetails']['country'];
-	//$address = $params['address'];
+	$address = $params['address'];
 	$systemurl = $params['systemurl'];
 	// Transform Current Currency into Monero
 	$amount_xmr = monero_changeto($amount, $currency);
@@ -166,9 +168,10 @@ function monero_link($params) {
 		'address'       => $address,
 		'amount_xmr'    => $amount_xmr,
 		'amount'        => $amount,
-		'currency'      => $currency
+		'currency'      => $currency,
+		'client_id'      => $client_id
 	];
-	$form = '<form action="' . $systemurl . '/modules/gateways/monero/createinvoice.php" method="POST">';
+	$form = '<form action="' . $systemurl . 'modules/gateways/monero/createinvoice.php" method="POST">';
 	foreach ($post as $key => $value) {
 		$form .= '<input type="hidden" name="' . $key . '" value = "' . $value . '" />';
 	}

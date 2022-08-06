@@ -142,7 +142,7 @@ function monero_link($params) {
 	$currency = $params['currency'];
 	$client_id = $params['clientdetails']['id'];
 	$firstname = $params['clientdetails']['firstname'];
-	$phone = $params['clientdetails']['firstname'];
+	$phone = $params['clientdetails']['phonenumber'];
 	$lastname = $params['clientdetails']['lastname'];
 	$email = $params['clientdetails']['email'];
 	$city = $params['clientdetails']['city'];
@@ -150,6 +150,8 @@ function monero_link($params) {
 	$postcode = $params['clientdetails']['postcode'];
 	$country = $params['clientdetails']['country'];
 	$address = $params['address'];
+	$address1 = $params['clientdetails']['address1'];
+	$address2 = $params['clientdetails']['address2'];
 	$systemurl = $params['systemurl'];
 	// Transform Current Currency into Monero
 	$amount_xmr = monero_changeto($amount, $currency);

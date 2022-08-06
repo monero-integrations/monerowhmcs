@@ -45,9 +45,9 @@ $url  = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->first
 $system_url = rtrim($url->value, '/');  // Strips default trailing / if there
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
-echo "<link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
+echo "<link href='$system_url/modules/gateways/monero/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
-echo  "<script src='/modules/gateways/monero/spin.js'></script>";
+echo  "<script src='$system_url/modules/gateways/monero/spin.js'></script>";
 echo  '<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>';
 
 echo '<title>Invoice</title>';
@@ -61,7 +61,7 @@ echo "<head>
             <body>
             <!-- page container  -->
             <div class='page-container'>
-                <img src='/modules/gateways/monero/monerologo.png' width='200' />
+                <img src='$system_url/modules/gateways/monero/monerologo.png' width='200' />
 
         <div class='progress' id='progress'></div>
 

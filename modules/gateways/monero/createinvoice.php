@@ -27,9 +27,7 @@ function monero_payment_id(){
 	
 }
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-$url  = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->first();
-$system_url = rtrim($url->value, '/');  // Strips default trailing / if there
+$system_url = rtrim(\App::getSystemURL(), '/');  // Strips default trailing / if there
 
 $monero_daemon = new Monero_rpc($link);
 

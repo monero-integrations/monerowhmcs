@@ -10,7 +10,7 @@ function monero_MetaData()
     return array(
         'DisplayName' => 'Monero',
         'APIVersion' => '1.1', // Use API Version 1.1
-        'DisableLocalCredtCardInput' => true,
+        'DisableLocalCreditCardInput' => true,
         'TokenisedStorage' => false,
     );
 }

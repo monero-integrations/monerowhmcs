@@ -19,4 +19,25 @@ function moneroEnable ( $vars ) {
 
 add_hook("RunFraudCheck", 1, "moneroEnable");
 
+function monero_auto_withdrawal($vars) {
+	
+	$gatewaymodule = "monero";
+	$GATEWAY = getGatewayVariables($gatewaymodule);
+	if(!$GATEWAY["type"]) die("Module not activated");
+	$library_path = (dirname(__DIR__, 2) . '/gateways/monero/library.php');
+	require_once($library_path);
+	$withdrawal_address = $GATEWAY['address'];
+	if (!empty($withdrawal_address)) {
+		$link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
+		try {
+			$monero_daemon = new Monero_rpc($link);
+			$monero_daemon->sweep_all($withdrawal_address);
+		} catch (Exception $ex) {
+			echo $ex->getMessage();
+		}
+	}
+}
+// This runs whenever main whmcs cron is run which is usually every 5 mins
+add_hook('AfterCronJob', 9, 'monero_auto_withdrawal');
+
 ?>

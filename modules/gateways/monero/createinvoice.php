@@ -1,5 +1,5 @@
 <?php
-include("../../../init.php"); 
+include("../../../init.php");
 include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
@@ -17,14 +17,14 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 
 function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
+	if(!isset($_COOKIE['payment_id'])) {
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
 		setcookie('payment_id', $payment_id, time()+2700);
 	} else {
 		$payment_id = $_COOKIE['payment_id'];
-    }
-		return $payment_id;
-	
+	}
+	return $payment_id;
+
 }
 
 $system_url = rtrim(\App::getSystemURL(), '/');  // Strips default trailing / if there
@@ -47,7 +47,7 @@ $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
 echo "<link href='$system_url/modules/gateways/monero/style.css' rel='stylesheet'>";
 echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
 echo  "<script src='$system_url/modules/gateways/monero/spin.js'></script>";
-echo  '<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>';
+echo  "<script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js'></script>";
 
 
 echo "<title>Invoice</title>";
@@ -100,14 +100,15 @@ echo "<head>
             <!-- xmr content box -->
             <div class='content-xmr-payment'>
             <div class='xmr-amount-send'>
+            <div>
             <span class='xmr-label'>Send:</span>
             <div id='amount_xmr' value='$amount_xmr' class='xmr-amount-box'>$amount_xmr</div><div class='xmr-box'>XMR</div>
             <button class='btn xmr-box-copy' data-clipboard-target='#amount_xmr'><img class='clippy' src='clippy.png' width='20' title='Copy to clipboard' alt='Copy to clipboard' /></button>
             </div>
+            <div>
             <br>
             <br>
-            <br>
-            <span class='xmr-label'>Conversion</span>
+            <span class='xmr-label'>Conversion:</span>
             <div class='xmr-amount-box'>$amount</div><div class='xmr-box'>$currency</div>
             </div>
             </div>
@@ -137,7 +138,7 @@ echo "<head>
             <!-- end page container  -->
             </body>
         ";
-	    
+
 
 echo "<script> function verify(){ 
 

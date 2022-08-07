@@ -1,0 +1,21 @@
+{
+  "schema": "1.0",
+  "type": "whmcs-addons",
+  "name": "moneroenable",
+  "license": "MIT",
+  "category": "utilities",
+  "description": {
+    "name": "Monero Enabler",
+    "tagline": "This module will allow you to disable fraud checking for Monero Payments.",
+    "long": "Disable WHMCS fraud checking when using Monero. This prevents Fraud checks being run when not needed."
+  },
+  "support": {
+    "docs_url": "https:\/\/github.com\/monero-integrations\/monerowhmcs"
+  },
+  "authors": [
+    {
+      "name": "monero-integrations",
+      "homepage": "https:\/\/monerointegrations.com\/"
+    }
+  ]
+}

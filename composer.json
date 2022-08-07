@@ -1,0 +1,28 @@
+{
+  "name": "monero-integrations/monerowhmcs",
+  "description": "A WHMCS Payment Gateway for accepting Monero.",
+  "keywords": [
+    "whmcs",
+    "web host automation platform",
+    "third party gateway module",
+    "gateway module",
+    "third party gateway",
+    "monero",
+    "xmr",
+    "cryptocurrency"
+  ],
+  "homepage": "https://github.com/monero-integrations/monerowhmcs",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "monero-integrations",
+      "email": "support@monerointegrations.com",
+      "homepage": "https://monerointegrations.com/",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "support@monerointegrations.com",
+    "wiki": "https://github.com/monero-integrations/monerowhmcs/wiki"
+  }
+}

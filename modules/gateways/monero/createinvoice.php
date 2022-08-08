@@ -1,5 +1,5 @@
 <?php
-include("../../../init.php"); 
+include("../../../init.php");
 include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
@@ -17,15 +17,17 @@ $link = $GATEWAY['daemon_host'].":".$GATEWAY['daemon_port']."/json_rpc";
 
 
 function monero_payment_id(){
-    if(!isset($_COOKIE['payment_id'])) { 
+	if(!isset($_COOKIE['payment_id'])) {
 		$payment_id  = bin2hex(openssl_random_pseudo_bytes(8));
 		setcookie('payment_id', $payment_id, time()+2700);
 	} else {
 		$payment_id = $_COOKIE['payment_id'];
-    }
-		return $payment_id;
-	
+	}
+	return $payment_id;
+
 }
+
+$system_url = rtrim(\App::getSystemURL(), '/');  // Strips default trailing / if there
 
 $monero_daemon = new Monero_rpc($link);
 
@@ -42,9 +44,10 @@ $uri  =  "monero:$address?amount=$amount_xmr";
 
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
-echo "<link href='/modules/gateways/monero/style.css' rel='stylesheet'>";
-echo  "<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>";
-echo  "<script src='/modules/gateways/monero/spin.js'></script>";
+echo "<link href='$system_url/modules/gateways/monero/style.css' rel='stylesheet'>";
+echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
+echo  "<script src='$system_url/modules/gateways/monero/spin.js'></script>";
+echo  "<script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js'></script>";
 
 
 echo "<title>Invoice</title>";
@@ -58,7 +61,7 @@ echo "<head>
             <body>
             <!-- page container  -->
             <div class='page-container'>
-                <img src='/modules/gateways/monero/monerologo.png' width='200' />
+                <img src='$system_url/modules/gateways/monero/monerologo.png' width='200' />
 
         <div class='progress' id='progress'></div>
 
@@ -82,6 +85,7 @@ echo "<head>
 				};
 				var target = document.getElementById('progress');
 				var spinner = new Spinner(opts).spin(target);
+                new ClipboardJS('.btn');
 			</script>
 			
         <div id='container'></div>
@@ -96,12 +100,25 @@ echo "<head>
             <!-- xmr content box -->
             <div class='content-xmr-payment'>
             <div class='xmr-amount-send'>
+            <div>
             <span class='xmr-label'>Send:</span>
-            <div class='xmr-amount-box'>".$amount_xmr." XMR ($" . $amount . " " . $currency .") </div><div class='xmr-box'>XMR</div>
+            <div id='amount_xmr' value='$amount_xmr' class='xmr-amount-box'>$amount_xmr</div><div class='xmr-box'>XMR</div>
+            <button class='btn xmr-box-copy' data-clipboard-target='#amount_xmr'><img class='clippy' src='clippy.png' width='20' title='Copy to clipboard' alt='Copy to clipboard' /></button>
+            </div>
+            <div>
+            <br>
+            <br>
+            <span class='xmr-label'>Conversion:</span>
+            <div class='xmr-amount-box'>$amount</div><div class='xmr-box'>$currency</div>
+            </div>
             </div>
             <div class='xmr-address'>
             <span class='xmr-label'>To this address:</span>
-            <div class='xmr-address-box'>". $array_integrated_address['integrated_address']."</div>
+            <div class='xmr-address-box'><p id='xmr_address' value='$address'>$address</p>
+            <button class='btn' data-clipboard-target='#xmr_address'>
+            <img src='clippy.png' width='20' title='Copy to clipboard' alt='Copy to clipboard' />
+            </button>
+            </div>
             </div>
             <div class='xmr-qr-code'>
             <span class='xmr-label'>Or scan QR:</span>
@@ -121,7 +138,7 @@ echo "<head>
             <!-- end page container  -->
             </body>
         ";
-	    
+
 
 echo "<script> function verify(){ 
 
@@ -133,7 +150,7 @@ $.ajax({ url : 'verify.php',
 		$('#message').text(msg);
 		if(msg=='Payment has been received.') {
 			//redirect to Paid invoice
-            window.location.href = '/viewinvoice.php?id=$invoice_id';
+            window.location.href = '$system_url/viewinvoice.php?id=$invoice_id';
 		}
 	},									
    error: function (req, status, err) {

@@ -84,6 +84,21 @@ span.xmr-payment-text-header {
     float: left;
 }
 
+.xmr-box-copy {
+    float: left;
+    /* background-color: #666; */
+    padding: 8px;
+    border-style: solid;
+    border-width: 1px;
+    /* border-color: rgb(170, 90, 90); */
+    color: #fff;
+}
+
+.clippy img {
+    background-color: rgb(255, 255, 255);
+    object-fit: fill;
+}
+
 span.xmr-label {
     display: block;
 }

@@ -123,5 +123,5 @@ function stop_payment($payment_id, $amount, $invoice_id, $fee, $link){
 	}
 } */
 
-$vefiry = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey, $currency);
-echo $vefiry;
+$verify = verify_payment($payment_id, $amount, $amount_xmr, $invoice_id, $fee, $status, $gatewaymodule, $hash, $secretKey, $currency);
+echo $verify;

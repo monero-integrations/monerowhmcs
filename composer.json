@@ -3,8 +3,8 @@
   "description": "A WHMCS Payment Gateway for accepting Monero.",
   "keywords": [
     "whmcs",
-    "web host automation platform",
-    "third party gateway module",
+    "payment gateway",
+    "cryptocurrency payment gateway",
     "gateway module",
     "self-managed payment gateway",
     "monero",

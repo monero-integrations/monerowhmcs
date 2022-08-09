@@ -1,0 +1,33 @@
+{
+  "schema": "1.0",
+  "type": "whmcs-gateways",
+  "name": "monerowhmcs",
+  "license": "MIT",
+  "category": "gateway",
+  "description": {
+    "name": "MoneroWHMCS",
+    "tagline": "A WHMCS Payment Gateway for accepting Monero.",
+    "long": "Monero is a secure, private, and untraceable cryptocurrency. It is open-source and accessible to all. With Monero, you are your own bank. Only you control and are responsible for your funds. Your accounts and transactions are kept private from prying eyes.",
+    "features": [
+      "free",
+      "opensource",
+      "self-hosted"
+    ]
+  },
+  "logo": {
+    "filename": "monerologo.png"
+  },
+  "support": {
+    "homepage": "https:\/\/github.com\/monero-integrations\/monerowhmcs",
+    "learn_more": "https:\/\/github.com\/monero-integrations\/monerowhmcs",
+    "email": "support@monerointegrations.com",
+    "support_url": "https:\/\/github.com\/monero-integrations\/monerowhmcs\/issues",
+    "docs_url": "https:\/\/github.com\/monero-integrations\/monerowhmcs"
+  },
+  "authors": [
+    {
+      "name": "monero-integrations",
+      "homepage": "https:\/\/monerointegrations.com\/"
+    }
+  ]
+}

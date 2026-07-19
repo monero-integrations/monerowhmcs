@@ -12,7 +12,9 @@
 
 class Monero_rpc
 {
-    protected $url = null, $is_debug = false, $parameters_structure = 'array';
+    // username/password are set from the gateway config in the constructor. declare them so PHP 8.2+
+    // does not emit a "Creation of dynamic property" deprecation (which surfaces as an HTTP 500).
+    protected $url = null, $is_debug = false, $parameters_structure = 'array', $username = null, $password = null;
 
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
@@ -136,6 +138,8 @@ class Monero_rpc
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+        // send a User-Agent; some reverse proxies in front of the wallet RPC reject blank ones
+        curl_setopt($ch, CURLOPT_USERAGENT, 'monerowhmcs/1.1 (+https://github.com/monero-integrations/monerowhmcs)');
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -157,8 +161,8 @@ class Monero_rpc
         {
             throw new RuntimeException('Unable to connect to '.$this->url . ' Error: ' . curl_error($ch));
         }
-        // close the connection
-        curl_close($ch);
+        // no curl_close: it is a no-op since PHP 8.0 and deprecated in 8.5 (the handle frees itself).
+        // Left in, its notice would print into the verify.php AJAX output on 8.5.
         return $response;
     }
 

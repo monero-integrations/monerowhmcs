@@ -1,15 +1,21 @@
 # MoneroWHMCS
 A WHMCS Payment Gateway for accepting Monero
 
+## Screenshot
+
+![Monero payment page at checkout](docs/screenshots/checkout.png)
+
 ## Dependencies
 This plugin is rather simple but there are a few things that need to be set up beforehand.
 
-* A web server! Ideally with the most recent versions of PHP and mysql
+* A web server with PHP 7.4 to 8.3 and mysql
 
 * The Monero wallet-cli and Monero wallet-rpc tools found [here](https://getmonero.org/downloads/)
 
-* [WHMCS](https://www.whmcs.com/)
+* [WHMCS](https://www.whmcs.com/) 8.x or 9.x
 This Monero plugin is a payment gateway for WHMCS
+
+The checkout page shows an integrated address with a QR code. The QR is generated in the customer's browser by a bundled copy of [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT), so the payment address and amount are not sent to any third-party service.
 
 ## Step 1: Activating the plugin
 * Downloading: First of all, you will need to download the plugin.  If you wish, you can also download the latest source code from GitHub. This can be done with the command `git clone https://github.com/monero-integrations/monerowhmcs.git` or can be downloaded as a zip file from the GitHub web page.
@@ -46,6 +52,3 @@ The easiest way to find a remote node to connect to is to visit [moneroworld.com
 
 ## Info on server authentication
 It is recommended that you specify a username/password with your wallet rpc. This can be done by starting your wallet rpc with `monero-wallet-rpc --rpc-bind-port 18082 --rpc-login username:password --wallet-file /path/walletfile` where "username:password" is the username and password that you want to use, separated by a colon. Alternatively, you can use the `--restricted-rpc` flag with the wallet rpc like so `./monero-wallet-rpc --testnet --rpc-bind-port 18082 --restricted-rpc --wallet-file wallet/path`.
-
-## Donating Me
-XMR Address : `44krVcL6TPkANjpFwS2GWvg1kJhTrN7y9heVeQiDJ3rP8iGbCd5GeA4f3c2NKYHC1R4mCgnW7dsUUUae2m9GiNBGT4T8s2X`

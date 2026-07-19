@@ -3,9 +3,7 @@ include("../../../init.php");
 include("../../../includes/functions.php");
 include("../../../includes/gatewayfunctions.php");
 include("../../../includes/invoicefunctions.php");
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once(__DIR__ . '/../monero.php');
 
 
 $gatewaymodule = "monero";
@@ -32,12 +30,21 @@ $system_url = rtrim(\App::getSystemURL(), '/');  // Strips default trailing / if
 $monero_daemon = new Monero_rpc($link);
 
 $message = "Waiting for your payment.";
-$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-$currency = stripslashes($_POST['currency']);
-$amount_xmr = stripslashes($_POST['amount_xmr']);
-$amount = stripslashes($_POST['amount']);
+$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$currency = preg_replace('/[^A-Za-z]/', '', $_POST['currency'] ?? '');
+$amount_xmr_raw = $_POST['amount_xmr'] ?? '';
+if (!is_numeric($amount_xmr_raw) || $amount_xmr_raw <= 0) {
+	die("Invalid XMR amount.");
+}
+$amount_xmr = monero_format_xmr_amount($amount_xmr_raw);
+// the formatter also returns '0' for values it rejects (overflow past int64, sub-piconero); a pay
+// page asking for 0 XMR makes no sense, so refuse those the same way
+if ($amount_xmr === '0') {
+	die("Invalid XMR amount.");
+}
+$amount = preg_replace('/[^0-9.]/', '', $_POST['amount'] ?? '');
 $payment_id = monero_payment_id();
-$invoice_id = stripslashes($_POST['invoice_id']);
+$invoice_id = preg_replace('/[^0-9]/', '', $_POST['invoice_id'] ?? '');
 $array_integrated_address = $monero_daemon->make_integrated_address($payment_id);
 $address = $array_integrated_address['integrated_address'];
 $uri  =  "monero:$address?amount=$amount_xmr";
@@ -45,9 +52,12 @@ $uri  =  "monero:$address?amount=$amount_xmr";
 $secretKey = $GATEWAY['secretkey'];
 $hash = md5($invoice_id . $payment_id . $amount_xmr . $secretKey);
 echo "<link href='$system_url/modules/gateways/monero/style.css' rel='stylesheet'>";
-echo  "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>";
+echo  "<script src='https://code.jquery.com/jquery-3.7.1.min.js'></script>";
 echo  "<script src='$system_url/modules/gateways/monero/spin.js'></script>";
 echo  "<script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js'></script>";
+// local QR generator (qrcode-generator, MIT). Replaces the original third-party QR image so the
+// payment address and amount never leave the merchant's server.
+echo  "<script src='$system_url/modules/gateways/monero/qrcode.min.js'></script>";
 
 
 echo "<title>Invoice</title>";
@@ -122,8 +132,9 @@ echo "<head>
             </div>
             <div class='xmr-qr-code'>
             <span class='xmr-label'>Or scan QR:</span>
-            <div class='xmr-qr-code-box'><img src='https://api.qrserver.com/v1/create-qr-code/? size=200x200&data=".$uri."' /></div>
+            <div class='xmr-qr-code-box'><div id='xmr-qr'></div></div>
             </div>
+            <script>(function(){var q=qrcode(0,'M');q.addData(" . json_encode($uri) . ");q.make();document.getElementById('xmr-qr').innerHTML=q.createImgTag(5,8);})();</script>
             <div class='clear'></div>
             </div>
             <!-- end content box -->
